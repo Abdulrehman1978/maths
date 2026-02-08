@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newton-Raphson Method - Numerical Methods</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        section {
+            margin-bottom: 35px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            margin-top: 15px;
+        }
+
+        p {
+            text-align: justify;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .definition-box {
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .formula-box {
+            background: #fff9e6;
+            border: 2px solid #f39c12;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .formula {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e67e22;
+            margin: 15px 0;
+        }
+
+        .formula sub {
+            font-size: 0.7em;
+        }
+
+        ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        ol li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        ul li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .flowchart {
+            background: #f8f9fa;
+            border: 2px solid #95a5a6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .flowchart-step {
+            background: white;
+            border: 2px solid #3498db;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            position: relative;
+        }
+
+        .flowchart-step:not(:last-child)::after {
+            content: '↓';
+            display: block;
+            text-align: center;
+            font-size: 1.5em;
+            color: #3498db;
+            margin: 5px 0;
+        }
+
+        .decision-box {
+            background: #fff3cd;
+            border: 2px solid #f39c12;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            position: relative;
+        }
+
+        .decision-box:not(:last-child)::after {
+            content: '↓';
+            display: block;
+            text-align: center;
+            font-size: 1.5em;
+            color: #f39c12;
+            margin: 5px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        table tr:hover {
+            background: #e8f4f8;
+        }
+
+        .advantages, .disadvantages {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .advantages {
+            border-left: 4px solid #27ae60;
+        }
+
+        .disadvantages {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .advantages h3 {
+            color: #27ae60;
+        }
+
+        .disadvantages h3 {
+            color: #e74c3c;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+        }
+
+        footer p {
+            margin: 5px 0;
+            text-align: center;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 1.6em;
+            }
+
+            h2 {
+                font-size: 1.4em;
+            }
+
+            .formula {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Numerical Methods – Newton-Raphson Method</h1>
+            <p>Assignment 03 | Mini Project</p>
+        </header>
+
+        <section id="introduction">
+            <h2>1. Introduction</h2>
+            <p>
+                <strong>Numerical Methods</strong> are mathematical techniques used to solve problems that cannot be solved analytically or are too complex for exact solutions. These methods provide approximate solutions through iterative algorithms and are widely used in engineering, physics, computer science, and applied mathematics.
+            </p>
+            <p>
+                <strong>Root-finding methods</strong> are a crucial category of numerical methods used to find solutions to equations of the form f(x) = 0. These methods are essential in various applications such as optimization problems, solving differential equations, and modeling real-world phenomena. Among the various root-finding techniques, the Newton-Raphson method stands out for its rapid convergence and efficiency.
+            </p>
+        </section>
+
+        <section id="definition">
+            <h2>2. Definition</h2>
+            <div class="definition-box">
+                <p>
+                    The <strong>Newton-Raphson Method</strong> (also known as Newton's Method) is an iterative numerical technique for finding successively better approximations to the roots (or zeros) of a real-valued function. It uses the tangent line at a current approximation to find the next approximation.
+                </p>
+                <p>
+                    The method starts with an initial guess x₀ and generates a sequence of approximations x₁, x₂, x₃, ... that converge to the actual root of the equation f(x) = 0, provided the initial guess is sufficiently close to the root and the function satisfies certain conditions.
+                </p>
+            </div>
+        </section>
+
+        <section id="algorithm">
+            <h2>3. Algorithm</h2>
+            <p>The step-by-step algorithm for the Newton-Raphson Method is as follows:</p>
+            <ol>
+                <li><strong>Start:</strong> Begin the process.</li>
+                <li><strong>Define the function:</strong> Input the function f(x) whose root is to be found.</li>
+                <li><strong>Define the derivative:</strong> Input the derivative f'(x) of the function.</li>
+                <li><strong>Input initial guess:</strong> Choose an initial approximation x₀ close to the actual root.</li>
+                <li><strong>Input tolerance:</strong> Set the desired accuracy (tolerance) ε and maximum number of iterations.</li>
+                <li><strong>Initialize iteration counter:</strong> Set n = 0.</li>
+                <li><strong>Calculate function values:</strong> Compute f(xₙ) and f'(xₙ).</li>
+                <li><strong>Check derivative:</strong> If f'(xₙ) = 0, the method fails (division by zero). Stop and choose a different initial guess.</li>
+                <li><strong>Apply Newton-Raphson formula:</strong> Calculate the next approximation: x<sub>n+1</sub> = x<sub>n</sub> - f(x<sub>n</sub>) / f'(x<sub>n</sub>).</li>
+                <li><strong>Check convergence:</strong> If |x<sub>n+1</sub> - x<sub>n</sub>| < ε or |f(x<sub>n+1</sub>)| < ε, then x<sub>n+1</sub> is the required root. Go to step 12.</li>
+                <li><strong>Update and repeat:</strong> Set n = n + 1, x<sub>n</sub> = x<sub>n+1</sub>, and go back to step 7. Check if maximum iterations exceeded.</li>
+                <li><strong>Output result:</strong> Display the root x<sub>n+1</sub> and the number of iterations.</li>
+                <li><strong>Stop:</strong> End the process.</li>
+            </ol>
+        </section>
+
+        <section id="formula">
+            <h2>4. Mathematical Formula</h2>
+            <div class="formula-box">
+                <p><strong>The Newton-Raphson Iterative Formula:</strong></p>
+                <div class="formula">
+                    x<sub>n+1</sub> = x<sub>n</sub> - f(x<sub>n</sub>) / f'(x<sub>n</sub>)
+                </div>
+                <p style="margin-top: 15px;"><strong>Where:</strong></p>
+                <ul style="text-align: left; display: inline-block;">
+                    <li>x<sub>n</sub> = current approximation</li>
+                    <li>x<sub>n+1</sub> = next (improved) approximation</li>
+                    <li>f(x<sub>n</sub>) = value of the function at x<sub>n</sub></li>
+                    <li>f'(x<sub>n</sub>) = value of the derivative at x<sub>n</sub></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="flowchart">
+            <h2>5. Flowchart</h2>
+            <div class="flowchart">
+                <div class="flowchart-step">START</div>
+                <div class="flowchart-step">Input function f(x) and its derivative f'(x)</div>
+                <div class="flowchart-step">Input initial guess x₀, tolerance ε, max iterations</div>
+                <div class="flowchart-step">Set n = 0</div>
+                <div class="flowchart-step">Calculate f(xₙ) and f'(xₙ)</div>
+                <div class="decision-box">Is f'(xₙ) = 0?<br>(YES → Method Fails / NO → Continue)</div>
+                <div class="flowchart-step">Calculate x<sub>n+1</sub> = x<sub>n</sub> - f(x<sub>n</sub>) / f'(x<sub>n</sub>)</div>
+                <div class="decision-box">Is |x<sub>n+1</sub> - x<sub>n</sub>| < ε?<br>(YES → Root Found / NO → Continue)</div>
+                <div class="flowchart-step">Set n = n + 1, x<sub>n</sub> = x<sub>n+1</sub></div>
+                <div class="decision-box">Max iterations reached?<br>(YES → Stop / NO → Go to Calculate f(xₙ))</div>
+                <div class="flowchart-step">Output root x<sub>n+1</sub> and iterations</div>
+                <div class="flowchart-step">STOP</div>
+            </div>
+        </section>
+
+        <section id="example">
+            <h2>6. Example</h2>
+            <h3>Problem:</h3>
+            <p>Find the root of the equation <strong>f(x) = x³ - x - 1 = 0</strong> using the Newton-Raphson method with initial guess x₀ = 1.5 and tolerance ε = 0.0001.</p>
+            
+            <h3>Solution:</h3>
+            <p><strong>Given:</strong></p>
+            <ul>
+                <li>f(x) = x³ - x - 1</li>
+                <li>f'(x) = 3x² - 1</li>
+                <li>x₀ = 1.5</li>
+                <li>ε = 0.0001</li>
+            </ul>
+
+            <p><strong>Iterations:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Iteration (n)</th>
+                        <th>xₙ</th>
+                        <th>f(xₙ)</th>
+                        <th>f'(xₙ)</th>
+                        <th>x<sub>n+1</sub></th>
+                        <th>|x<sub>n+1</sub> - xₙ|</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0</td>
+                        <td>1.5000</td>
+                        <td>0.8750</td>
+                        <td>5.7500</td>
+                        <td>1.3478</td>
+                        <td>0.1522</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>1.3478</td>
+                        <td>0.1006</td>
+                        <td>4.4460</td>
+                        <td>1.3252</td>
+                        <td>0.0226</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>1.3252</td>
+                        <td>0.0020</td>
+                        <td>4.2684</td>
+                        <td>1.3247</td>
+                        <td>0.0005</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>1.3247</td>
+                        <td>0.0000</td>
+                        <td>4.2669</td>
+                        <td>1.3247</td>
+                        <td>0.0000</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Result:</strong> The root of the equation is approximately <span class="highlight">x ≈ 1.3247</span> after 3 iterations.</p>
+        </section>
+
+        <section id="advantages-disadvantages">
+            <h2>7. Advantages and Disadvantages</h2>
+            
+            <div class="advantages">
+                <h3>✓ Advantages</h3>
+                <ul>
+                    <li><strong>Rapid Convergence:</strong> The method exhibits quadratic convergence near the root, making it much faster than linear methods like the Bisection method.</li>
+                    <li><strong>High Accuracy:</strong> Provides highly accurate results in fewer iterations when the initial guess is close to the actual root.</li>
+                    <li><strong>Simple Formula:</strong> The iterative formula is straightforward and easy to implement in programming.</li>
+                    <li><strong>Wide Applicability:</strong> Can be used for a variety of functions including polynomial, transcendental, and algebraic equations.</li>
+                    <li><strong>Efficient:</strong> Requires fewer function evaluations compared to many other root-finding methods.</li>
+                </ul>
+            </div>
+
+            <div class="disadvantages">
+                <h3>✗ Disadvantages</h3>
+                <ul>
+                    <li><strong>Requires Derivative:</strong> The method requires the calculation of the derivative f'(x), which may be difficult or impossible for some functions.</li>
+                    <li><strong>Sensitive to Initial Guess:</strong> Poor choice of initial approximation may lead to divergence or convergence to a different root.</li>
+                    <li><strong>Division by Zero:</strong> The method fails if f'(x) = 0 at any iteration point.</li>
+                    <li><strong>May Not Converge:</strong> For functions with multiple roots, inflection points, or discontinuities, the method may oscillate or diverge.</li>
+                    <li><strong>No Interval Guarantee:</strong> Unlike the Bisection method, it doesn't guarantee finding a root within a specific interval.</li>
+                    <li><strong>Computational Cost:</strong> Calculating derivatives can be computationally expensive for complex functions.</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer>
+            <p><strong>Submitted by:</strong> ________________________________________</p>
+            <p><strong>Branch:</strong> ____________________ | <strong>Roll No:</strong> ____________________</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">Numerical Methods – Assignment 03 | Mini Project</p>
+        </footer>
+    </div>
+</body>
+</html>
